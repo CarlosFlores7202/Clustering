@@ -1,0 +1,75 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Generar datos de ejemplo
+data_points = [
+    (185, 72),
+    (170, 56),
+    (168, 60),
+    (179, 68),
+    (182, 72),
+    (188, 77)
+]
+
+# Inicialización de centroides
+centroid1 = data_points[0]
+centroid2 = data_points[1]
+
+# Listas para almacenar los puntos en cada clúster
+cluster1 = []
+cluster2 = []
+
+# Listas para seguir la trayectoria de los centroides
+centroid1_x = [centroid1[0]]
+centroid1_y = [centroid1[1]]
+centroid2_x = [centroid2[0]]
+centroid2_y = [centroid2[1]]
+
+# Crear un DataFrame para almacenar las asignaciones
+assignments = pd.DataFrame(data_points, columns=['X', 'Y'])
+assignments['Assignment'] = 1  # Inicialmente, asignar todo a 1er clúster
+
+# Número máximo de iteraciones
+max_iterations = 5
+
+# Bucle principal
+for _ in range(max_iterations):
+    # Asignar puntos a clústeres
+    cluster1 = []
+    cluster2 = []
+
+    for i, point in enumerate(data_points):
+        x, y = point
+        distance_to_centroid1 = ((x - centroid1[0]) ** 2 + (y - centroid1[1]) ** 2) ** 0.5
+        distance_to_centroid2 = ((x - centroid2[0]) ** 2 + (y - centroid2[1]) ** 2) ** 0.5
+
+        if distance_to_centroid1 < distance_to_centroid2:
+            cluster1.append(point)
+            assignments.at[i, 'Assignment'] = 1
+        else:
+            cluster2.append(point)
+            assignments.at[i, 'Assignment'] = 2
+
+    # Calcular nuevos centroides
+    centroid1 = (sum(p[0] for p in cluster1) / len(cluster1),
+                sum(p[1] for p in cluster1) / len(cluster1))
+
+    centroid2 = (sum(p[0] for p in cluster2) / len(cluster2),
+                sum(p[1] for p in cluster2) / len(cluster2))
+
+    # Actualizar las listas de centroides para la visualización
+    centroid1_x.append(centroid1[0])
+    centroid1_y.append(centroid1[1])
+    centroid2_x.append(centroid2[0])
+    centroid2_y.append(centroid2[1])
+print(centroid1,centroid2)
+# Visualización con colores de clústeres
+plt.scatter(assignments['X'], assignments['Y'], c=assignments['Assignment'], cmap='viridis', label='Puntos')
+plt.scatter(centroid1_x, centroid1_y, marker='x', c='r', label='Centroide 1')
+plt.scatter(centroid2_x, centroid2_y, marker='x', c='g', label='Centroide 2')
+plt.legend()
+plt.show()
+
+# Imprimir el DataFrame de asignaciones
+print("Asignaciones:")
+print(assignments)
