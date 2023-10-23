@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Generar datos de ejemplo
 data_points = [
     (185, 72),
     (170, 56),
@@ -15,26 +14,21 @@ data_points = [
 centroid1 = data_points[0]
 centroid2 = data_points[1]
 
-# Listas para almacenar los puntos en cada clúster
-cluster1 = []
-cluster2 = []
-
-# Listas para seguir la trayectoria de los centroides
+# Listas para actualizacion
 centroid1_x = [centroid1[0]]
 centroid1_y = [centroid1[1]]
 centroid2_x = [centroid2[0]]
 centroid2_y = [centroid2[1]]
 
-# Crear un DataFrame para almacenar las asignaciones
+#DataFrame para almacenar las asignaciones
 assignments = pd.DataFrame(data_points, columns=['X', 'Y'])
 assignments['Assignment'] = 1  # Inicialmente, asignar todo a 1er clúster
 
 # Número máximo de iteraciones
 max_iterations = 5
 
-# Bucle principal
 for _ in range(max_iterations):
-    # Asignar puntos a clústeres
+  # Guardar puntos
     cluster1 = []
     cluster2 = []
 
@@ -50,26 +44,27 @@ for _ in range(max_iterations):
             cluster2.append(point)
             assignments.at[i, 'Assignment'] = 2
 
-    # Calcular nuevos centroides
+    # Calculo de nuevos centroides
     centroid1 = (sum(p[0] for p in cluster1) / len(cluster1),
                 sum(p[1] for p in cluster1) / len(cluster1))
 
     centroid2 = (sum(p[0] for p in cluster2) / len(cluster2),
                 sum(p[1] for p in cluster2) / len(cluster2))
 
-    # Actualizar las listas de centroides para la visualización
+    # Actualizar de centroides
     centroid1_x.append(centroid1[0])
     centroid1_y.append(centroid1[1])
     centroid2_x.append(centroid2[0])
     centroid2_y.append(centroid2[1])
+print("Centroides Finales")
 print(centroid1,centroid2)
-# Visualización con colores de clústeres
+# Grafico
 plt.scatter(assignments['X'], assignments['Y'], c=assignments['Assignment'], cmap='viridis', label='Puntos')
 plt.scatter(centroid1_x, centroid1_y, marker='x', c='r', label='Centroide 1')
 plt.scatter(centroid2_x, centroid2_y, marker='x', c='g', label='Centroide 2')
 plt.legend()
 plt.show()
 
-# Imprimir el DataFrame de asignaciones
+# Asignaciones
 print("Asignaciones:")
 print(assignments)
